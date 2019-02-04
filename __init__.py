@@ -1,6 +1,7 @@
 from builtins import str
 from builtins import map
 from builtins import object
+import pkgutil
 import csv
 import json
 from collections import *
@@ -81,14 +82,15 @@ class Node(object):
 
 
 class ICD9(Node):
-  def __init__(self, codesfname):
+  def __init__(self):
     # dictionary of depth -> dictionary of code->node
     self.depth2nodes = defaultdict(dict)
     super(ICD9, self).__init__(-1, 'ROOT')
 
-    with open(codesfname, 'r') as f:
-      allcodes = json.loads(f.read())
-      self.process(allcodes)
+    # Let's try to import this crazy JSON
+    data = pkgutil.get_data(__package__, 'codes.json')
+    allcodes = json.loads(data)
+    self.process(allcodes)
 
   def process(self, allcodes):
     for hierarchy in allcodes:
