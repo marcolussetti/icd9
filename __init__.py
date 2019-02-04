@@ -1,3 +1,6 @@
+from builtins import str
+from builtins import map
+from builtins import object
 import csv
 import json
 from collections import *
@@ -37,7 +40,7 @@ class Node(object):
 
   @property
   def codes(self):
-    return map(lambda n: n.code, self.leaves)
+    return [n.code for n in self.leaves]
 
   @property
   def parents(self):
@@ -61,7 +64,7 @@ class Node(object):
 
   # return all leaf notes with a depth of @depth
   def leaves_at_depth(self, depth):
-    return filter(lambda n: n.depth == depth, self.leaves)
+    return [n for n in self.leaves if n.depth == depth]
 
   @property
   def siblings(self):
@@ -83,7 +86,7 @@ class ICD9(Node):
     self.depth2nodes = defaultdict(dict)
     super(ICD9, self).__init__(-1, 'ROOT')
 
-    with file(codesfname, 'r') as f:
+    with open(codesfname, 'r') as f:
       allcodes = json.loads(f.read())
       self.process(allcodes)
 
@@ -112,6 +115,6 @@ class ICD9(Node):
 
 if __name__ == '__main__':
   tree = ICD9('codes.json')
-  counter = Counter(map(str, tree.leaves))
+  counter = Counter(list(map(str, tree.leaves)))
   import pdb
   pdb.set_trace()
